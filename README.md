@@ -66,10 +66,9 @@ Tabel Score
 
 *** Docker *** 
 
-- generate docker container
-docker compose up -d
+- docker compose up -d
 
 *** Prisma migration ***
-npx prisma migrate dev --name init
 
-npx prisma generate
+- npx prisma migrate dev --name init
+- npx prisma generate
