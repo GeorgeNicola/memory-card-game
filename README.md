@@ -76,3 +76,9 @@ Tabel Score
 
 - npx prisma migrate dev --name init2
 - npx prisma generate
+
+**_ TO DO _**
+
+1. Create reusable components: ScoresTable, Card, CardList
+2. Add filters + sort to getScores
+3. Refactor Main Page
