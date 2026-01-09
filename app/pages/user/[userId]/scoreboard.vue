@@ -26,7 +26,7 @@
     </div>
 
     <div class="scores-container">
-      <div v-if="userScores.length === 0" class="no-scores">
+      <div v-if="scores.length === 0" class="no-scores">
         <p>
           You haven't played any games yet. Start playing to see your scores
           here!
@@ -39,21 +39,15 @@
           <div class="table-cell">Difficulty</div>
           <div class="table-cell">Time</div>
           <div class="table-cell">Moves</div>
-          <div class="table-cell">Date</div>
         </div>
 
-        <div
-          v-for="(score, index) in userScores"
-          :key="index"
-          class="table-row"
-        >
+        <div v-for="(score, index) in scores" :key="index" class="table-row">
           <div class="table-cell rank">{{ index + 1 }}</div>
           <div class="table-cell">
             <span class="difficulty-badge">{{ score.difficulty }}</span>
           </div>
           <div class="table-cell time">{{ formatTime(score.time) }}</div>
           <div class="table-cell">{{ score.moves }}</div>
-          <div class="table-cell date">{{ formatDate(score.date) }}</div>
         </div>
       </div>
     </div>
@@ -66,50 +60,14 @@ definePageMeta({
   middleware: "auth",
 });
 
-const route = useRoute();
-const { user } = useAuth();
-const { getFilteredScores } = useScores();
+const { getScores } = useScores();
 
-const selectedDifficulty = ref("");
-const sortBy = ref("time-asc");
-
-const userScores = computed(() => {
-  const userId = route.params.userId;
-  let scores = getFilteredScores(selectedDifficulty.value || null, userId);
-
-  scores.sort((a, b) => {
-    switch (sortBy.value) {
-      case "time-asc":
-        return a.time - b.time;
-      case "time-desc":
-        return b.time - a.time;
-      case "moves-asc":
-        return a.moves - b.moves;
-      case "moves-desc":
-        return b.moves - a.moves;
-      case "date-desc":
-        return new Date(b.date) - new Date(a.date);
-      default:
-        return 0;
-    }
-  });
-
-  return scores;
-});
+const scores = await getScores();
 
 function formatTime(seconds) {
   const mins = Math.floor(seconds / 60);
   const secs = seconds % 60;
   return `${mins}:${secs.toString().padStart(2, "0")}`;
-}
-
-function formatDate(dateString) {
-  const date = new Date(dateString);
-  return date.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
 }
 </script>
 

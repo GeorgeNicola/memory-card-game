@@ -25,7 +25,8 @@ model User {
 model Score {
   scoreId    Int @id @default(autoincrement())
   userId     Int
-  timp       Int
-  dificulty  Int
+  time       Int
+  difficulty  Int
+  moves      Int
   user       User @relation(fields: [userId], references: [userId])
 }

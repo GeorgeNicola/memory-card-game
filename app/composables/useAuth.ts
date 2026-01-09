@@ -1,13 +1,12 @@
+import type { User } from "@prisma/client";
+
 export const useAuth = () => {
-  // Use Nuxt's useState for SSR-friendly global state
-  const user = useState<any>("user", () => null);
+  const user = useState<User | null>("user", () => null);
   const token = useState<string | null>("token", () => null);
 
-  // A computed property is better than a function for checking auth status
   const isAuthenticated = computed(() => !!token.value);
 
   const init = () => {
-    // process.client ensures this only runs in the browser (localStorage is not on server)
     if (process.client) {
       const savedToken = localStorage.getItem("authToken");
       const savedUser = localStorage.getItem("user");
@@ -54,7 +53,6 @@ export const useAuth = () => {
     if (process.client) {
       localStorage.removeItem("authToken");
       localStorage.removeItem("user");
-      // Optional: Clear any cookies or redirect
       navigateTo("/login");
     }
   };
@@ -66,6 +64,6 @@ export const useAuth = () => {
     register,
     login,
     logout,
-    isAuthenticated, // This is now a reactive Ref
+    isAuthenticated,
   };
 };

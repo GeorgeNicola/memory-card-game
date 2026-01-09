@@ -28,7 +28,11 @@
 
     <div
       class="game-grid"
-      :style="{ gridTemplateColumns: `repeat(${gridSize}, 1fr)` }"
+      :style="{
+        gridTemplateColumns: `repeat(${gridSize}, 1fr)`,
+        gridTemplateRows: `repeat(${gridSize}, 1fr)`,
+        maxWidth: `${gridSize * 200}px`,
+      }"
     >
       <div
         v-for="(card, index) in cards"
@@ -80,7 +84,7 @@ definePageMeta({
 
 const { saveScore } = useScores();
 
-const difficulties = [{ size: 3 }, { size: 4 }, { size: 5 }];
+const difficulties = [{ size: 4 }, { size: 6 }, { size: 8 }];
 
 const symbols = [
   "🎮",
@@ -95,9 +99,29 @@ const symbols = [
   "🎧",
   "🎬",
   "🎲",
+  "🕹️",
+  "👾",
+  "🎰",
+  "🧱",
+  "💣",
+  "🚀",
+  "💎",
+  "🔋",
+  "♟️",
+  "🧩",
+  "🀄",
+  "🃏",
+  "🎱",
+  "🪀",
+  "🪁",
+  "🧿",
+  "🎻",
+  "🎷",
+  "🪗",
+  "📻",
 ];
 
-const gridSize = ref(3);
+const gridSize = ref(4);
 const cards = ref([]);
 const flippedCards = ref([]);
 const moves = ref(0);
@@ -191,11 +215,7 @@ function checkMatch() {
 
       if (matches.value === totalPairs.value) {
         stopTimer();
-        saveScore(
-          `${gridSize.value}x${gridSize.value}`,
-          timer.value,
-          moves.value
-        );
+        saveScore(gridSize.value, timer.value, moves.value);
         setTimeout(() => {
           isGameWon.value = true;
         }, 500);

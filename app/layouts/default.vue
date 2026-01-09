@@ -3,8 +3,7 @@
     <header class="header">
       <div class="header-content">
         <div class="logo">
-          <span class="logo-icon">🎮</span>
-          <span class="logo-text">Memory Game</span>
+          <span class="logo-text">Card Memory Game</span>
         </div>
 
         <nav class="nav">
@@ -35,8 +34,6 @@
 export default {
   data() {
     const auth = useAuth();
-
-    console.log(auth);
 
     return {
       auth: auth,

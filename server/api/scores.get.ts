@@ -1,14 +1,14 @@
 export default defineEventHandler(async (event) => {
-  const query = getQuery(event)
-  
+  const query = getQuery(event);
+
   return await prisma.score.findMany({
     where: {
       userId: query.userId ? Number(query.userId) : undefined,
-      dificulty: query.dificulty ? Number(query.dificulty) : undefined
+      difficulty: query.difficulty ? Number(query.difficulty) : undefined,
     },
     orderBy: {
-      timp: 'asc' 
+      time: "asc",
     },
-    include: { user: true } 
-  })
-})
+    include: { user: true },
+  });
+});

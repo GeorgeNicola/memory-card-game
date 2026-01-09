@@ -1,37 +1,3 @@
-<!-- <script setup>
-// const { data: list } = await useFetch('/api/scores', {
-//     query: { userId: 1, dificulty: 2 }
-// })
-
-const { data: list } = await useFetch("/api/scores");
-
-const saveScore = async () => {
-  try {
-    const response = await $fetch("/api/score/add", {
-      method: "POST",
-      body: {
-        userId: 1, // ID-ul utilizatorului logat
-        timp: 131, // Timpul în secunde
-        dificulty: 1, // Nivelul de dificultate
-      },
-    });
-
-    console.log("Scor salvat cu succes:", response);
-    alert("Scor salvat!");
-  } catch (err) {
-    console.error("Eroare la salvarea scorului:", err);
-  }
-};
-</script>
-
-<template>
-  Scoreboard Page
-
-  <button @click="saveScore">Salvează Scorul</button>
-
-  <pre>{{ list }}</pre>
-</template> -->
-
 <template>
   <div class="scoreboard-page">
     <h1 class="page-title">Scoreboard</h1>
@@ -60,7 +26,7 @@ const saveScore = async () => {
     </div>
 
     <div class="scores-container">
-      <div v-if="filteredScores.length === 0" class="no-scores">
+      <div v-if="scores.length === 0" class="no-scores">
         <p>No scores yet. Play a game to see your results here!</p>
       </div>
 
@@ -71,22 +37,16 @@ const saveScore = async () => {
           <div class="table-cell">Difficulty</div>
           <div class="table-cell">Time</div>
           <div class="table-cell">Moves</div>
-          <div class="table-cell">Date</div>
         </div>
 
-        <div
-          v-for="(score, index) in filteredScores"
-          :key="index"
-          class="table-row"
-        >
+        <div v-for="(score, index) in scores" :key="index" class="table-row">
           <div class="table-cell rank">{{ index + 1 }}</div>
-          <div class="table-cell">{{ score.userName || "Anonymous" }}</div>
+          <div class="table-cell">{{ score.user.name || "Anonymous" }}</div>
           <div class="table-cell">
             <span class="difficulty-badge">{{ score.difficulty }}</span>
           </div>
           <div class="table-cell time">{{ formatTime(score.time) }}</div>
           <div class="table-cell">{{ score.moves }}</div>
-          <div class="table-cell date">{{ formatDate(score.date) }}</div>
         </div>
       </div>
     </div>
@@ -102,44 +62,14 @@ definePageMeta({
 const selectedDifficulty = ref("");
 const sortBy = ref("time-asc");
 
-const { getFilteredScores } = useScores();
+const { getScores } = useScores();
 
-const filteredScores = computed(() => {
-  let scores = getFilteredScores(selectedDifficulty.value || null);
-
-  scores.sort((a, b) => {
-    switch (sortBy.value) {
-      case "time-asc":
-        return a.time - b.time;
-      case "time-desc":
-        return b.time - a.time;
-      case "moves-asc":
-        return a.moves - b.moves;
-      case "moves-desc":
-        return b.moves - a.moves;
-      case "date-desc":
-        return new Date(b.date) - new Date(a.date);
-      default:
-        return 0;
-    }
-  });
-
-  return scores;
-});
+let scores = await getScores();
 
 function formatTime(seconds) {
   const mins = Math.floor(seconds / 60);
   const secs = seconds % 60;
   return `${mins}:${secs.toString().padStart(2, "0")}`;
-}
-
-function formatDate(dateString) {
-  const date = new Date(dateString);
-  return date.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
 }
 </script>
 
@@ -250,6 +180,7 @@ function formatDate(dateString) {
 
 .table-cell {
   color: #ffffff;
+  text-align: center;
 }
 
 .rank {
@@ -302,7 +233,7 @@ function formatDate(dateString) {
 
   .table-header,
   .table-row {
-    grid-template-columns: 50px 1fr 80px 80px 70px;
+    grid-template-columns: 1fr;
     padding: 0.75rem;
     gap: 0.5rem;
     font-size: 0.85rem;
