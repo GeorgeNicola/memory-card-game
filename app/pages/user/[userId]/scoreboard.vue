@@ -49,9 +49,9 @@ onMounted(() => {
         <label class="filter-label">Difficulty:</label>
         <select v-model="selectedDifficultyFilter" class="filter-select">
           <option :value="null">All</option>
-          <option value="3">3x3</option>
           <option value="4">4x4</option>
-          <option value="5">5x5</option>
+          <option value="6">6x6</option>
+          <option value="8">8x8</option>
         </select>
       </div>
 

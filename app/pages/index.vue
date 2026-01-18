@@ -1,280 +1,35 @@
 <template>
-  <div class="game-page">
-    <div class="difficulty-section">
-      <button
-        v-for="level in difficulties"
-        :key="level.size"
-        @click="setDifficulty(level.size)"
-        :class="['difficulty-btn', { active: gridSize === level.size }]"
-      >
-        {{ level.size }}x{{ level.size }}
-      </button>
-    </div>
-
-    <div class="stats-container">
-      <div class="stat-item">
-        <span class="stat-label">Timer:</span>
-        <span class="stat-value">{{ formattedTime }}</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-label">Moves:</span>
-        <span class="stat-value">{{ moves }}</span>
-      </div>
-      <div class="stat-item">
-        <span class="stat-label">Matches:</span>
-        <span class="stat-value">{{ matches }} / {{ totalPairs }}</span>
-      </div>
-    </div>
-
-    <div
-      class="game-grid"
-      :style="{
-        gridTemplateColumns: `repeat(${gridSize}, 1fr)`,
-        gridTemplateRows: `repeat(${gridSize}, 1fr)`,
-        maxWidth: `${gridSize * 200}px`,
-      }"
-    >
-      <div
-        v-for="(card, index) in cards"
-        :key="index"
-        @click="flipCard(index)"
-        class="card-wrapper"
-      >
-        <div
-          :class="[
-            'card',
-            {
-              flipped: card.isFlipped || card.isMatched,
-              matched: card.isMatched,
-            },
-          ]"
-        >
-          <div class="card-back">?</div>
-          <div class="card-front">{{ card.symbol }}</div>
-        </div>
-      </div>
-    </div>
-
-    <div v-if="isGameWon" class="modal-overlay" @click="closeModal">
-      <div class="modal-content" @click.stop>
-        <h2 class="modal-title">Congratulations!</h2>
-        <p class="modal-text">You completed the game!</p>
-        <div class="modal-stats">
-          <p>
-            Time: <strong>{{ formattedTime }}</strong>
-          </p>
-          <p>
-            Moves: <strong>{{ moves }}</strong>
-          </p>
-          <p>
-            Difficulty: <strong>{{ gridSize }}x{{ gridSize }}</strong>
-          </p>
-        </div>
-        <button @click="playAgain" class="modal-btn">Play Again</button>
-      </div>
-    </div>
-  </div>
+  <GamePage />
 </template>
 
-<script setup>
-definePageMeta({
-  layout: "default",
-  middleware: "auth",
-});
+<script>
+export default defineComponent({
+  setup() {
+    definePageMeta({
+      layout: "default",
+      middleware: "auth",
+    });
 
-useSeoMeta({
-  title: "Memory Card Game | Test Your Brain Power",
-  ogTitle: "Memory Card Game: The Ultimate Card Matching Game",
-  description:
-    "Challenge your memory with this addictive card matching game. Improve your focus, train your brain, and climb the global leaderboards!",
-  ogDescription:
-    "Flip cards, find pairs, and beat the clock! Play Memory Card Game for free in your browser.",
-  ogImage: "./memory-card-game-og.png",
-  twitterImage: "./memory-card-game-og.png",
-  twitterCard: "summary_large_image",
-  twitterTitle: "Memory Card Game",
-  twitterDescription:
-    "Train your brain with the ultimate memory card challenge.",
-  author: "Nicoa George-Petrus",
-});
-
-const { saveScore } = useScores();
-
-const difficulties = [{ size: 4 }, { size: 6 }, { size: 8 }];
-
-const symbols = [
-  "🎮",
-  "🎯",
-  "🎨",
-  "🎭",
-  "🎪",
-  "🎸",
-  "🎺",
-  "🎹",
-  "🎤",
-  "🎧",
-  "🎬",
-  "🎲",
-  "🕹️",
-  "👾",
-  "🎰",
-  "🧱",
-  "💣",
-  "🚀",
-  "💎",
-  "🔋",
-  "♟️",
-  "🧩",
-  "🀄",
-  "🃏",
-  "🎱",
-  "🪀",
-  "🪁",
-  "🧿",
-  "🎻",
-  "🎷",
-  "🪗",
-  "📻",
-];
-
-const gridSize = ref(4);
-const cards = ref([]);
-const flippedCards = ref([]);
-const moves = ref(0);
-const matches = ref(0);
-const timer = ref(0);
-const timerInterval = ref(null);
-const isGameWon = ref(false);
-
-const totalPairs = computed(() => (gridSize.value * gridSize.value) / 2);
-
-const formattedTime = computed(() => {
-  const mins = Math.floor(timer.value / 60);
-  const secs = timer.value % 60;
-  return `${mins.toString().padStart(2, "0")}:${secs
-    .toString()
-    .padStart(2, "0")}`;
-});
-
-function setDifficulty(size) {
-  gridSize.value = size;
-  resetGame();
-}
-
-function initializeGame() {
-  const totalCards = gridSize.value * gridSize.value;
-  const pairs = totalCards / 2;
-
-  const selectedSymbols = symbols.slice(0, pairs);
-  const cardSymbols = [...selectedSymbols, ...selectedSymbols];
-
-  for (let i = cardSymbols.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [cardSymbols[i], cardSymbols[j]] = [cardSymbols[j], cardSymbols[i]];
-  }
-
-  cards.value = cardSymbols.map((symbol) => ({
-    symbol,
-    isFlipped: false,
-    isMatched: false,
-  }));
-}
-
-function startTimer() {
-  if (!timerInterval.value) {
-    timerInterval.value = setInterval(() => {
-      timer.value++;
-    }, 1000);
-  }
-}
-
-function stopTimer() {
-  if (timerInterval.value) {
-    clearInterval(timerInterval.value);
-    timerInterval.value = null;
-  }
-}
-
-function flipCard(index) {
-  if (
-    flippedCards.value.length >= 2 ||
-    cards.value[index].isFlipped ||
-    cards.value[index].isMatched
-  ) {
-    return;
-  }
-
-  if (moves.value === 0) {
-    startTimer();
-  }
-
-  cards.value[index].isFlipped = true;
-  flippedCards.value.push(index);
-
-  if (flippedCards.value.length === 2) {
-    moves.value++;
-    checkMatch();
-  }
-}
-
-function checkMatch() {
-  const [firstIndex, secondIndex] = flippedCards.value;
-  const firstCard = cards.value[firstIndex];
-  const secondCard = cards.value[secondIndex];
-
-  if (firstCard.symbol === secondCard.symbol) {
-    setTimeout(() => {
-      cards.value[firstIndex].isMatched = true;
-      cards.value[secondIndex].isMatched = true;
-      matches.value++;
-      flippedCards.value = [];
-
-      if (matches.value === totalPairs.value) {
-        stopTimer();
-        saveScore(gridSize.value, timer.value, moves.value);
-        setTimeout(() => {
-          isGameWon.value = true;
-        }, 500);
-      }
-    }, 500);
-  } else {
-    setTimeout(() => {
-      cards.value[firstIndex].isFlipped = false;
-      cards.value[secondIndex].isFlipped = false;
-      flippedCards.value = [];
-    }, 1000);
-  }
-}
-
-function resetGame() {
-  stopTimer();
-  cards.value = [];
-  flippedCards.value = [];
-  moves.value = 0;
-  matches.value = 0;
-  timer.value = 0;
-  isGameWon.value = false;
-  initializeGame();
-}
-
-function closeModal() {
-  isGameWon.value = false;
-}
-
-function playAgain() {
-  resetGame();
-}
-
-onMounted(() => {
-  initializeGame();
-});
-
-onUnmounted(() => {
-  stopTimer();
+    useSeoMeta({
+      title: "Memory Card Game | Test Your Brain Power",
+      ogTitle: "Memory Card Game: The Ultimate Card Matching Game",
+      description:
+        "Challenge your memory with this addictive card matching game. Improve your focus, train your brain, and climb the global leaderboards!",
+      ogDescription:
+        "Flip cards, find pairs, and beat the clock! Play Memory Card Game for free in your browser.",
+      ogImage: "./memory-card-game-og.png",
+      twitterImage: "./memory-card-game-og.png",
+      twitterCard: "summary_large_image",
+      twitterTitle: "Memory Card Game",
+      twitterDescription:
+        "Train your brain with the ultimate memory card challenge.",
+      author: "Nicola George-Petrus",
+    });
+  },
 });
 </script>
 
-<style scoped>
+<style>
 .game-page {
   max-width: 900px;
   margin: 0 auto;

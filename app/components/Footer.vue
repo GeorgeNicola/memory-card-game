@@ -16,9 +16,11 @@ export default {
       <div class="line"></div>
       <div class="content">
         <p>&copy; 2026 Card Memory Game</p>
-        <div class="status" v-if="auth.user">
-          Conectat ca: <span>{{ auth.user.name }}</span>
-        </div>
+        <ClientOnly>
+          <div class="status" v-if="auth.user">
+            Conectat ca: <span>{{ auth.user.name }}</span>
+          </div>
+        </ClientOnly>
       </div>
     </div>
   </footer>
