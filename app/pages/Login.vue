@@ -7,35 +7,11 @@
         <p class="subtitle">Login to continue</p>
       </div>
 
-      <form @submit.prevent="handleLogin" class="auth-form">
-        <div v-if="error" class="error-message">{{ error }}</div>
-
-        <div class="form-group">
-          <label for="email" class="form-label">Email</label>
-          <input
-            id="email"
-            v-model="email"
-            type="email"
-            class="form-input"
-            placeholder="Enter your email"
-            required
-          />
-        </div>
-
-        <div class="form-group">
-          <label for="password" class="form-label">Password</label>
-          <input
-            id="password"
-            v-model="password"
-            type="password"
-            class="form-input"
-            placeholder="Enter your password"
-            required
-          />
-        </div>
-
-        <button type="submit" class="submit-btn">Login</button>
-      </form>
+      <LoginForm
+        @handleLogin="handleLogin"
+        :loading="isLoading"
+        :error-message="apiError"
+      />
 
       <div class="auth-footer">
         <p class="footer-text">
@@ -47,57 +23,40 @@
   </div>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+export default defineComponent({
   setup() {
     definePageMeta({
       layout: "auth",
     });
+
     const auth = useAuth();
 
-    return {
-      auth: auth,
-    };
+    return { auth };
   },
-
   data() {
     return {
-      email: "",
-      password: "",
-      error: "",
+      isLoading: false,
+      apiError: "",
     };
   },
-
   methods: {
-    async handleLogin() {
+    async handleLogin(credentials: any) {
+      this.isLoading = true;
+      this.apiError = "";
+
       try {
-        this.error = "";
-        this.success = "";
-
-        if (!this.email || !this.password) {
-          this.error = "Please fill in all fields";
-          return;
-        }
-
-        if (this.password.length < 6) {
-          this.error = "Password must be at least 6 characters";
-          return;
-        }
-
-        this.auth.login(this.email, this.password);
-
-        this.success = "Account logged in successfully! Redirecting to home...";
-
-        setTimeout(() => {
-          this.$router.push("/");
-        }, 1000);
-      } catch (err) {
-        console.error("Login error:", err);
-        this.error = "An error occurred during login";
+        await this.auth.login(credentials.email, credentials.password);
+        this.$router.push("/");
+      } catch (err: any) {
+        console.error("Login failed:", err);
+        this.apiError = "Invalid email or password";
+      } finally {
+        this.isLoading = false;
       }
     },
   },
-};
+});
 </script>
 
 <style scoped>
@@ -144,79 +103,9 @@ export default {
   font-size: 1rem;
 }
 
-.auth-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.error-message {
-  padding: 0.75rem;
-  background: rgba(255, 68, 68, 0.1);
-  border: 1px solid #ff4444;
-  border-radius: 8px;
-  color: #ff6666;
-  text-align: center;
-  font-size: 0.9rem;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.form-label {
-  color: #cccccc;
-  font-weight: 600;
-  font-size: 0.9rem;
-}
-
-.form-input {
-  padding: 0.75rem 1rem;
-  background: #111111;
-  border: 2px solid #333333;
-  border-radius: 8px;
-  color: #ffffff;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-}
-
-.form-input:focus {
-  outline: none;
-  border-color: #39ff14;
-  box-shadow: 0 0 10px rgba(57, 255, 20, 0.3);
-}
-
-.form-input::placeholder {
-  color: #555555;
-}
-
-.submit-btn {
-  padding: 1rem;
-  background: #39ff14;
-  color: #0a0a0a;
-  border: none;
-  border-radius: 8px;
-  font-size: 1.1rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  margin-top: 0.5rem;
-}
-
-.submit-btn:hover {
-  transform: scale(1.02);
-  box-shadow: 0 0 30px rgba(57, 255, 20, 0.5);
-}
-
 .auth-footer {
   margin-top: 2rem;
   text-align: center;
-}
-
-.footer-text {
-  color: #888888;
 }
 
 .footer-link {
@@ -224,11 +113,6 @@ export default {
   text-decoration: none;
   font-weight: 600;
   margin-left: 0.5rem;
-  transition: color 0.3s ease;
-}
-
-.footer-link:hover {
-  color: #2dd40f;
 }
 
 @media (max-width: 768px) {

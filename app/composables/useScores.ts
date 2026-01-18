@@ -13,12 +13,24 @@ export const useScores = () => {
     });
   };
 
-  const getScores = async () => {
-    const scores = await $fetch("/api/scores", {
+  const getScores = async ({
+    difficulty,
+    orderBy,
+    userId,
+  }: {
+    difficulty?: number;
+    orderBy?: IOrderBy;
+    userId?: string;
+  }) => {
+    const scores = await useFetch("/api/scores", {
       method: "GET",
+      query: {
+        difficulty: difficulty,
+        orderBy: orderBy,
+        userId: userId,
+      },
     });
-    console.log(scores);
-    return scores;
+    return scores.data.value;
   };
 
   return {

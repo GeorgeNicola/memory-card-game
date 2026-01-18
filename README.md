@@ -51,10 +51,10 @@ Node + PostgreSQL
 
 /scores
 
-- filtre: userId, dificultate
+- filters: userId, difficulty
 - sort: scor
 
-Tabel Users
+Table Users
 
 - UserId
 - Name
@@ -65,8 +65,8 @@ Tabel Score
 
 - ScoreId
 - UserId
-- Score / timp
-- Dificulty
+- Score / time
+- Difficulty
 
 **_ Docker _**
 
@@ -74,11 +74,5 @@ Tabel Score
 
 **_ Prisma migration _**
 
-- npx prisma migrate dev --name init2
+- npx prisma migrate dev --name migrationName
 - npx prisma generate
-
-**_ TO DO _**
-
-1. Create reusable components: ScoresTable, Card, CardList
-2. Add filters + sort to getScores
-3. Refactor Main Page

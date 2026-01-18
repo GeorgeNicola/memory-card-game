@@ -5,6 +5,8 @@ export default defineNuxtRouteMiddleware((to, from) => {
 
   init();
 
+  console.log("Auth Middleware: isAuthenticated =", isAuthenticated);
+
   if (!isAuthenticated) {
     return navigateTo("/login");
   }

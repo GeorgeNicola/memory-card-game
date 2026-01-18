@@ -1,9 +1,23 @@
+<script setup>
+const route = useRoute();
+const userId = computed(() => route.params.userId);
+
+definePageMeta({
+  layout: "default",
+  middleware: "auth",
+});
+</script>
+
 <template>
   <div class="profile-page">
     <div class="profile-header">
       <h1 class="page-title">Profile</h1>
       <nav class="profile-nav">
-        <NuxtLink :to="`/user/${userId}`" class="nav-tab" active-class="active">
+        <NuxtLink
+          :to="`/user/${userId}/profile`"
+          class="nav-tab"
+          active-class="active"
+        >
           Profile Info
         </NuxtLink>
         <NuxtLink
@@ -22,36 +36,7 @@
   </div>
 </template>
 
-<script setup>
-const route = useRoute();
-const { user } = useAuth();
-const userId = computed(() => route.params.userId);
-
-definePageMeta({
-  layout: "default",
-  middleware: "auth",
-});
-</script>
-
 <style scoped>
-.profile-page {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.profile-header {
-  margin-bottom: 2rem;
-}
-
-.page-title {
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: #39ff14;
-  text-align: center;
-  margin-bottom: 2rem;
-  text-shadow: 0 0 20px rgba(57, 255, 20, 0.4);
-}
-
 .profile-nav {
   display: flex;
   justify-content: center;

@@ -7,7 +7,7 @@ export const useAuth = () => {
   const isAuthenticated = computed(() => !!token.value);
 
   const init = () => {
-    if (process.client) {
+    if (import.meta.client) {
       const savedToken = localStorage.getItem("authToken");
       const savedUser = localStorage.getItem("user");
 

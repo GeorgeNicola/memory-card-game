@@ -82,6 +82,22 @@ definePageMeta({
   middleware: "auth",
 });
 
+useSeoMeta({
+  title: "Memory Card Game | Test Your Brain Power",
+  ogTitle: "Memory Card Game: The Ultimate Card Matching Game",
+  description:
+    "Challenge your memory with this addictive card matching game. Improve your focus, train your brain, and climb the global leaderboards!",
+  ogDescription:
+    "Flip cards, find pairs, and beat the clock! Play Memory Card Game for free in your browser.",
+  ogImage: "./memory-card-game-og.png",
+  twitterImage: "./memory-card-game-og.png",
+  twitterCard: "summary_large_image",
+  twitterTitle: "Memory Card Game",
+  twitterDescription:
+    "Train your brain with the ultimate memory card challenge.",
+  author: "Nicoa George-Petrus",
+});
+
 const { saveScore } = useScores();
 
 const difficulties = [{ size: 4 }, { size: 6 }, { size: 8 }];

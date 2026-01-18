@@ -1,3 +1,45 @@
+<script setup>
+definePageMeta({
+  layout: "default",
+  middleware: "auth",
+});
+
+const { getScores } = useScores();
+const { user } = useAuth();
+const scores = ref([]);
+
+const selectedDifficultyFilter = ref(null);
+const sortBy = ref("time-asc");
+
+const sortByOptions = {
+  "time-asc": { time: IOrderByDirection.ASC },
+  "time-desc": { time: IOrderByDirection.DESC },
+  "moves-asc": { moves: IOrderByDirection.ASC },
+  "moves-desc": { moves: IOrderByDirection.DESC },
+};
+
+console.log("User ID in Scoreboard.vue:", user.value.id);
+
+const updateScores = async () => {
+  scores.value = await getScores({
+    difficulty: selectedDifficultyFilter.value || undefined,
+    orderBy: sortByOptions[sortBy.value] || undefined,
+    userId: user.value.id,
+  });
+};
+
+watch(selectedDifficultyFilter, () => {
+  updateScores();
+});
+
+watch(sortBy, () => {
+  updateScores();
+});
+
+onMounted(() => {
+  updateScores();
+});
+</script>
 <template>
   <div class="user-scoreboard">
     <h2 class="section-title">My Scores</h2>
@@ -5,17 +47,17 @@
     <div class="filters">
       <div class="filter-group">
         <label class="filter-label">Difficulty:</label>
-        <select v-model="selectedDifficulty" class="filter-select">
-          <option value="">All</option>
-          <option value="3x3">3x3</option>
-          <option value="4x4">4x4</option>
-          <option value="5x5">5x5</option>
+        <select v-model="selectedDifficultyFilter" class="filter-select">
+          <option :value="null">All</option>
+          <option value="3">3x3</option>
+          <option value="4">4x4</option>
+          <option value="5">5x5</option>
         </select>
       </div>
 
       <div class="filter-group">
         <label class="filter-label">Sort by:</label>
-        <select v-model="sortBy" class="filter-select">
+        <select id="sort-by-select" v-model="sortBy" class="filter-select">
           <option value="time-asc">Shortest Time</option>
           <option value="time-desc">Longest Time</option>
           <option value="moves-asc">Fewest Moves</option>
@@ -25,51 +67,9 @@
       </div>
     </div>
 
-    <div class="scores-container">
-      <div v-if="scores.length === 0" class="no-scores">
-        <p>
-          You haven't played any games yet. Start playing to see your scores
-          here!
-        </p>
-      </div>
-
-      <div v-else class="scores-table">
-        <div class="table-header">
-          <div class="table-cell">Rank</div>
-          <div class="table-cell">Difficulty</div>
-          <div class="table-cell">Time</div>
-          <div class="table-cell">Moves</div>
-        </div>
-
-        <div v-for="(score, index) in scores" :key="index" class="table-row">
-          <div class="table-cell rank">{{ index + 1 }}</div>
-          <div class="table-cell">
-            <span class="difficulty-badge">{{ score.difficulty }}</span>
-          </div>
-          <div class="table-cell time">{{ formatTime(score.time) }}</div>
-          <div class="table-cell">{{ score.moves }}</div>
-        </div>
-      </div>
-    </div>
+    <ScoresTable :scores="scores" />
   </div>
 </template>
-
-<script setup>
-definePageMeta({
-  layout: "default",
-  middleware: "auth",
-});
-
-const { getScores } = useScores();
-
-const scores = await getScores();
-
-function formatTime(seconds) {
-  const mins = Math.floor(seconds / 60);
-  const secs = seconds % 60;
-  return `${mins}:${secs.toString().padStart(2, "0")}`;
-}
-</script>
 
 <style scoped>
 .user-scoreboard {
