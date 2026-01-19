@@ -1,9 +1,8 @@
-import { getPrisma } from "../utils/prisma";
+import { prisma } from "../utils/prisma";
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
 
-  const prisma = await getPrisma();
   const user = await prisma.user.findFirst({
     where: {
       email: body.email,

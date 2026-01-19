@@ -1,10 +1,9 @@
-import { getPrisma } from "~~/server/utils/prisma";
+import { prisma } from "../../utils/prisma";
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
 
-  const prisma = await getPrisma();
-
+  console.log("Received score data:", body);
   return await prisma.score.create({
     data: {
       userId: body.userId,

@@ -15,9 +15,4 @@ export default defineNuxtConfig({
   runtimeConfig: {
     databaseUrl: process.env.DATABASE_URL,
   },
-  nitro: {
-    externals: {
-      inline: ["~/prisma/generated"],
-    },
-  },
 });
