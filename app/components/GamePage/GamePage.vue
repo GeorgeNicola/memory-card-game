@@ -11,6 +11,8 @@
       </button>
     </div>
 
+    <BestScore :difficulty="gridSize" />
+
     <div class="stats-container">
       <div class="stat-item">
         <span class="stat-label">Timer:</span>
@@ -68,10 +70,12 @@
 
 <script>
 import PlayAgainModal from "~/components/PlayAgainModal.vue";
+import BestScore from "~/components/GamePage/BestScore.vue";
 
 export default {
   components: {
     PlayAgainModal,
+    BestScore,
   },
   setup() {
     const { saveScore } = useScores();
@@ -112,6 +116,10 @@ export default {
         "🧿",
         "🎻",
         "🎷",
+        "🍕",
+        "🌟",
+        "🔥",
+        "🎊",
       ],
       gridSize: 4,
       cards: [],

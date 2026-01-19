@@ -5,6 +5,7 @@ export default defineNuxtPlugin((nuxtApp) => {
 
   if (import.meta.client) {
     store.dispatch("auth/initAuth");
+    store.dispatch("highScores/fetchHighScores");
   }
 
   return {

@@ -18,7 +18,7 @@ export default {
         <p>&copy; 2026 Card Memory Game</p>
         <ClientOnly>
           <div class="status" v-if="auth.user">
-            Conectat ca: <span>{{ auth.user.name }}</span>
+            Connected as: <span>{{ auth.user.name }}</span>
           </div>
         </ClientOnly>
       </div>
