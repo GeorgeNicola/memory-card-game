@@ -3,7 +3,7 @@
     <header class="header">
       <div class="header-content">
         <div class="logo">
-          <span class="logo-text">Card Memory Game</span>
+          <span class="logo-text">Memory Card Game</span>
         </div>
 
         <NavigationMenu />

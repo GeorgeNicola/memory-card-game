@@ -112,7 +112,6 @@ export default defineComponent({
 }
 
 .player-name {
-  text-align: left;
   color: #ffffff;
 }
 
