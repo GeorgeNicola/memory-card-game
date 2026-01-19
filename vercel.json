@@ -1,12 +1,4 @@
 {
   "buildCommand": "npm run build",
-  "installCommand": "npm install",
-  "functions": {
-    "server/api/**/*.ts": {
-      "runtime": "nodejs18.x"
-    }
-  },
-  "env": {
-    "PRISMA_QUERY_ENGINE_LIBRARY": "@prisma/query-engine-node-api"
-  }
+  "installCommand": "npm install"
 }
