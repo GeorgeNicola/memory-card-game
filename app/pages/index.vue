@@ -17,8 +17,10 @@ export default defineComponent({
         "Challenge your memory with this addictive card matching game. Improve your focus, train your brain, and climb the global leaderboards!",
       ogDescription:
         "Flip cards, find pairs, and beat the clock! Play Memory Card Game for free in your browser.",
-      ogImage: "./memory-card-game-og.png",
-      twitterImage: "./memory-card-game-og.png",
+      ogImage:
+        "https://memory-card-game-pearl-one.vercel.app/memory-card-game.png",
+      twitterImage:
+        "https://memory-card-game-pearl-one.vercel.app/memory-card-game.png",
       twitterCard: "summary_large_image",
       twitterTitle: "Memory Card Game",
       twitterDescription:

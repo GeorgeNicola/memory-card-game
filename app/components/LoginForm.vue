@@ -13,6 +13,7 @@
         class="form-input"
         placeholder="Enter your email"
         required
+        autocomplete="email"
       />
     </div>
 
@@ -25,6 +26,7 @@
         class="form-input"
         placeholder="Enter your password"
         required
+        autocomplete="current-password"
       />
     </div>
 

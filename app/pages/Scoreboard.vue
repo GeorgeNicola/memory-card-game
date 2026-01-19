@@ -42,8 +42,10 @@ export default defineComponent({
       description:
         "Challenge your memory with this addictive card matching game.",
       ogDescription: "Flip cards, find pairs, and beat the clock!",
-      ogImage: "./memory-card-game-og.png",
-      twitterImage: "./memory-card-game-og.png",
+      ogImage:
+        "https://memory-card-game-pearl-one.vercel.app/memory-card-game.png",
+      twitterImage:
+        "https://memory-card-game-pearl-one.vercel.app/memory-card-game.png",
       twitterCard: "summary_large_image",
       twitterTitle: "Memory Card Game",
       twitterDescription:

@@ -1,3 +1,5 @@
+import { getPrisma } from "../utils/prisma";
+
 enum IOrderByDirection {
   ASC = "asc",
   DESC = "desc",
@@ -15,6 +17,8 @@ export default defineEventHandler(async (event) => {
   const orderBy: IOrderBy = query.orderBy
     ? JSON.parse(query.orderBy as string)
     : {};
+
+  const prisma = await getPrisma();
 
   return await prisma.score.findMany({
     where: {
