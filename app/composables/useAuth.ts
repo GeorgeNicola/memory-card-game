@@ -50,7 +50,7 @@ export const useAuth = () => {
     user.value = null;
     token.value = null;
 
-    if (process.client) {
+    if (import.meta.client) {
       localStorage.removeItem("authToken");
       localStorage.removeItem("user");
       navigateTo("/login");

@@ -1,45 +1,3 @@
-<script setup>
-definePageMeta({
-  layout: "default",
-  middleware: "auth",
-});
-
-const { getScores } = useScores();
-const { user } = useAuth();
-const scores = ref([]);
-
-const selectedDifficultyFilter = ref(null);
-const sortBy = ref("time-asc");
-
-const sortByOptions = {
-  "time-asc": { time: IOrderByDirection.ASC },
-  "time-desc": { time: IOrderByDirection.DESC },
-  "moves-asc": { moves: IOrderByDirection.ASC },
-  "moves-desc": { moves: IOrderByDirection.DESC },
-};
-
-console.log("User ID in Scoreboard.vue:", user.value.id);
-
-const updateScores = async () => {
-  scores.value = await getScores({
-    difficulty: selectedDifficultyFilter.value || undefined,
-    orderBy: sortByOptions[sortBy.value] || undefined,
-    userId: user.value.id,
-  });
-};
-
-watch(selectedDifficultyFilter, () => {
-  updateScores();
-});
-
-watch(sortBy, () => {
-  updateScores();
-});
-
-onMounted(() => {
-  updateScores();
-});
-</script>
 <template>
   <div class="user-scoreboard">
     <h2 class="section-title">My Scores</h2>
@@ -62,7 +20,6 @@ onMounted(() => {
           <option value="time-desc">Longest Time</option>
           <option value="moves-asc">Fewest Moves</option>
           <option value="moves-desc">Most Moves</option>
-          <option value="date-desc">Most Recent</option>
         </select>
       </div>
     </div>
@@ -70,6 +27,67 @@ onMounted(() => {
     <ScoresTable :scores="scores" />
   </div>
 </template>
+<script>
+export default {
+  setup() {
+    definePageMeta({
+      layout: "default",
+      middleware: "auth",
+    });
+
+    const { getScores } = useScores();
+    const { user } = useAuth();
+
+    return {
+      getScores,
+      user,
+    };
+  },
+
+  data() {
+    return {
+      scores: [],
+      selectedDifficultyFilter: null,
+      sortBy: "time-asc",
+      sortByOptions: {
+        "time-asc": { time: "asc" },
+        "time-desc": { time: "desc" },
+        "moves-asc": { moves: "asc" },
+        "moves-desc": { moves: "desc" },
+      },
+    };
+  },
+
+  watch: {
+    selectedDifficultyFilter() {
+      this.updateScores();
+    },
+    sortBy() {
+      this.updateScores();
+    },
+  },
+
+  methods: {
+    async updateScores() {
+      try {
+        console.log("User ID in Scoreboard.vue:", this.user.userId);
+
+        this.scores = await this.getScores({
+          difficulty: this.selectedDifficultyFilter || undefined,
+          orderBy: this.sortByOptions[this.sortBy] || undefined,
+          userId: this.user?.userId,
+        });
+      } catch (error) {
+        console.error("Failed to fetch scores:", error);
+      }
+    },
+  },
+
+  mounted() {
+    this.updateScores();
+  },
+};
+</script>
 
 <style scoped>
 .user-scoreboard {

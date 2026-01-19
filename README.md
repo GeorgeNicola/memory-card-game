@@ -74,5 +74,5 @@ Tabel Score
 
 **_ Prisma migration _**
 
-- npx prisma migrate dev --name migrationName
+- npx prisma migrate dev --name testMigration
 - npx prisma generate

@@ -2,11 +2,10 @@ export const useScores = () => {
   const { user } = useAuth();
 
   const saveScore = async (difficulty: number, time: number, moves: number) => {
-    console.log("Saving score:", { difficulty, time, moves });
     await useFetch("/api/score/add", {
       method: "POST",
       body: {
-        userId: 3,
+        userId: user.value?.userId,
         time: time,
         difficulty: difficulty,
         moves: moves,

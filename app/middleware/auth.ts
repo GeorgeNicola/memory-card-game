@@ -1,11 +1,16 @@
 "use client";
 
 export default defineNuxtRouteMiddleware((to, from) => {
-  const { isAuthenticated, init } = useAuth();
+  if (import.meta.client) {
+    const { isAuthenticated, init, user } = useAuth();
 
-  init();
+    init();
 
-  if (!isAuthenticated) {
-    return navigateTo("/login");
+    console.log("Middleware - isAuthenticated:", isAuthenticated.value);
+    console.log("Middleware - user:", user.value);
+
+    if (!isAuthenticated.value) {
+      return navigateTo("/login");
+    }
   }
 });
