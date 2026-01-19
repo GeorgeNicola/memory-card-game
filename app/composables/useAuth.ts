@@ -1,69 +1,69 @@
+// @ts-ignore
+import { useStore } from "vuex";
 import type { User } from "@prisma/client";
 
 export const useAuth = () => {
-  const user = useState<User | null>("user", () => null);
-  const token = useState<string | null>("token", () => null);
+  const store = useStore();
 
-  const isAuthenticated = computed(() => !!token.value);
+  const user = computed<User | null>(() => store.getters["auth/getUser"]);
+  const token = computed<string | null>(() => store.getters["auth/getToken"]);
+  const isAuthenticated = computed<boolean>(
+    () => store.getters["auth/isAuthenticated"],
+  );
+  const isLoading = computed<boolean>(() => store.getters["auth/isLoading"]);
+  const error = computed<string | null>(() => store.getters["auth/getError"]);
 
   const init = () => {
-    if (import.meta.client) {
-      const savedToken = localStorage.getItem("authToken");
-      const savedUser = localStorage.getItem("user");
-
-      if (savedToken && savedUser) {
-        token.value = savedToken;
-        try {
-          user.value = JSON.parse(savedUser);
-        } catch (e) {
-          console.error("Failed to parse user from storage");
-        }
-      }
-    }
+    store.dispatch("auth/initAuth");
   };
 
   const register = async (name: string, email: string, password: string) => {
-    await $fetch("/api/register", {
-      method: "POST",
-      body: {
-        name: name,
-        email: email,
-        password: password,
-      },
-    });
-  };
+    try {
+      const result = await store.dispatch("auth/register", {
+        name,
+        email,
+        password,
+      });
 
-  const login = async (email: string, password: string) => {
-    const user = await $fetch("/api/login", {
-      method: "POST",
-      body: {
-        email: email,
-        password: password,
-      },
-    });
-
-    localStorage.setItem("authToken", JSON.stringify(user.userId));
-    localStorage.setItem("user", JSON.stringify(user));
-  };
-
-  const logout = () => {
-    user.value = null;
-    token.value = null;
-
-    if (import.meta.client) {
-      localStorage.removeItem("authToken");
-      localStorage.removeItem("user");
-      navigateTo("/login");
+      await navigateTo("/");
+      return result;
+    } catch (error: any) {
+      console.error("Registration failed:", error);
+      throw error;
     }
   };
 
+  const login = async (email: string, password: string) => {
+    try {
+      const result = await store.dispatch("auth/login", { email, password });
+
+      await navigateTo("/");
+      return result;
+    } catch (error: any) {
+      console.error("Login failed:", error);
+      throw error;
+    }
+  };
+
+  const logout = () => {
+    store.dispatch("auth/logout");
+  };
+
+  const clearError = () => {
+    store.dispatch("auth/clearError");
+  };
+
   return {
-    user,
-    token,
+    user: readonly(user),
+    token: readonly(token),
+    isAuthenticated: readonly(isAuthenticated),
+    isLoading: readonly(isLoading),
+    error: readonly(error),
+
     init,
     register,
     login,
     logout,
-    isAuthenticated,
+    clearError,
   };
 };

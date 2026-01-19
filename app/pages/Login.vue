@@ -9,8 +9,8 @@
 
       <LoginForm
         @handleLogin="handleLogin"
-        :loading="isLoading"
-        :error-message="apiError"
+        :loading="auth.isLoading.value"
+        :error-message="auth.error.value ?? ''"
       />
 
       <div class="auth-footer">
@@ -32,27 +32,18 @@ export default defineComponent({
 
     const auth = useAuth();
 
+    onMounted(() => {
+      auth.clearError();
+    });
+
     return { auth };
   },
-  data() {
-    return {
-      isLoading: false,
-      apiError: "",
-    };
-  },
   methods: {
-    async handleLogin(credentials: any) {
-      this.isLoading = true;
-      this.apiError = "";
-
+    async handleLogin(credentials: { email: string; password: string }) {
       try {
         await this.auth.login(credentials.email, credentials.password);
-        this.$router.push("/");
-      } catch (err: any) {
-        console.error("Login failed:", err);
-        this.apiError = "Invalid email or password";
-      } finally {
-        this.isLoading = false;
+      } catch (error: any) {
+        console.error("Login failed:", error);
       }
     },
   },

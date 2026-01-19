@@ -8,11 +8,10 @@
       </div>
 
       <RegisterForm
-        :error="error"
+        :error="auth.error.value ?? ''"
         :success="success"
-        :loading="loading"
+        :loading="auth.isLoading.value"
         @handleRegister="handleRegister"
-        @handleError="handleError"
       />
 
       <div class="auth-footer">
@@ -25,7 +24,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 export default {
   setup() {
     definePageMeta({
@@ -33,25 +32,26 @@ export default {
     });
 
     const auth = useAuth();
+
+    onMounted(() => {
+      auth.clearError();
+    });
+
     return { auth };
   },
   data() {
     return {
-      error: "",
       success: "",
-      loading: false,
     };
   },
   methods: {
-    handleError(errorMessage) {
-      this.error = errorMessage;
-    },
-
-    async handleRegister(formData) {
+    async handleRegister(formData: {
+      name: string;
+      email: string;
+      password: string;
+    }) {
       try {
-        this.error = "";
         this.success = "";
-        this.loading = true;
 
         await this.auth.register(
           formData.name,
@@ -59,16 +59,9 @@ export default {
           formData.password,
         );
 
-        this.success = "Account created successfully! Redirecting to login...";
-
-        setTimeout(() => {
-          this.$router.push("/login");
-        }, 1000);
+        this.success = "Account created successfully! Redirecting...";
       } catch (err) {
         console.error("Registration error:", err);
-        this.error = "An error occurred during registration";
-      } finally {
-        this.loading = false;
       }
     },
   },
