@@ -9,6 +9,10 @@ export default defineEventHandler(async (event) => {
       password: body.password,
     },
   });
-  if (!user) throw createError({ statusCode: 401, message: "Date incorecte" });
+  if (!user)
+    throw createError({
+      statusCode: 401,
+      message: "Email or password is incorrect",
+    });
   return user;
 });
