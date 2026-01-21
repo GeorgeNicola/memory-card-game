@@ -81,15 +81,6 @@ export const actions = {
         body: { name, email, password },
       });
 
-      // Auto-login after successful registration
-      const token = JSON.stringify(userData.userId);
-      commit("SET_AUTH", { user: userData, token });
-
-      if (import.meta.client) {
-        localStorage.setItem("authToken", token);
-        localStorage.setItem("user", JSON.stringify(userData));
-      }
-
       return userData;
     } catch (error: any) {
       const errorMessage =
