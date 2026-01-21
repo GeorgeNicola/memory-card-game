@@ -85,19 +85,6 @@ a {
   padding: 2rem;
 }
 
-.layout {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
-}
-
-.auth-layout {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .header {
   background: rgba(20, 20, 20, 0.95);
   border-bottom: 2px solid #39ff14;

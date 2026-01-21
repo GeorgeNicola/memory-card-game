@@ -52,14 +52,12 @@ export const useAuth = () => {
   };
 
   return {
-    // State
     user: readonly(user),
     token: readonly(token),
     isAuthenticated: readonly(isAuthenticated),
     isLoading: readonly(isLoading),
     error: readonly(error),
 
-    // Actions
     init,
     register,
     login,
