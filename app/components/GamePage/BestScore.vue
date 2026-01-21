@@ -14,43 +14,58 @@
   </div>
 </template>
 
-<script setup>
-import { defineProps, computed, onMounted, watch } from "vue";
-
-const props = defineProps({
-  difficulty: {
-    type: Number,
-    required: true,
-    validator: (value) => [4, 6, 8].includes(value),
+<script>
+export default {
+  props: {
+    difficulty: {
+      type: Number,
+      required: true,
+      validator: (value) => [4, 6, 8].includes(value),
+    },
   },
-});
 
-const { bestScores, isLoading, error, fetchHighScores, getBestScore } =
-  useHighScores();
+  setup() {
+    const { bestScores, isLoading, error, fetchHighScores, getBestScore } =
+      useHighScores();
 
-const bestScore = computed(() => {
-  return getBestScore(props.difficulty);
-});
+    return {
+      bestScores,
+      isLoading,
+      error,
+      fetchHighScores,
+      getBestScore,
+    };
+  },
 
-const formatTime = (seconds) => {
-  const mins = Math.floor(seconds / 60);
-  const secs = seconds % 60;
-  return `${mins}:${secs.toString().padStart(2, "0")}`;
+  computed: {
+    bestScore() {
+      return this.getBestScore(this.difficulty);
+    },
+  },
+
+  methods: {
+    formatTime(seconds) {
+      const mins = Math.floor(seconds / 60);
+      const secs = seconds % 60;
+      return `${mins}:${secs.toString().padStart(2, "0")}`;
+    },
+  },
+
+  // Fetch high scores when component mounts
+  async mounted() {
+    await this.fetchHighScores();
+  },
+
+  watch: {
+    // Refresh when difficulty changes
+    difficulty: {
+      async handler() {
+        // No need to refetch, just reactive to bestScore computed
+      },
+      immediate: true,
+    },
+  },
 };
-
-// Fetch high scores when component mounts
-onMounted(async () => {
-  await fetchHighScores();
-});
-
-// Refresh when difficulty changes
-watch(
-  () => props.difficulty,
-  async () => {
-    // No need to refetch, just reactive to bestScore computed
-  },
-  { immediate: true },
-);
 </script>
 
 <style scoped>

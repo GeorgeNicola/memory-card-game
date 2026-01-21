@@ -47,7 +47,6 @@ export const mutations = {
 export const actions = {
   async fetchHighScores({ commit }: any) {
     commit("SET_LOADING", true);
-    commit("CLEAR_ERROR");
 
     try {
       const response = await $fetch("/api/scores");
@@ -78,7 +77,6 @@ export const actions = {
       commit("SET_ALL_BEST_SCORES", bestScores);
     } catch (error: any) {
       console.error("Failed to fetch high scores:", error);
-      commit("SET_ERROR", error.message || "Failed to fetch high scores");
     } finally {
       commit("SET_LOADING", false);
     }
@@ -86,9 +84,5 @@ export const actions = {
 
   async refreshHighScores({ dispatch }: any) {
     await dispatch("fetchHighScores");
-  },
-
-  clearError({ commit }: any) {
-    commit("CLEAR_ERROR");
   },
 };
