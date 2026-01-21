@@ -1,6 +1,8 @@
 <template>
   <form @submit.prevent="handleSubmit" class="auth-form">
-    <div v-if="error" class="error-message">{{ error }}</div>
+    <div v-if="localError || error" class="error-message">
+      {{ localError || error }}
+    </div>
     <div v-if="success" class="success-message">{{ success }}</div>
 
     <div class="form-group">
@@ -59,16 +61,19 @@ export default {
         email: "",
         password: "",
       },
+      localError: "",
     };
   },
   methods: {
     handleSubmit() {
+      console.timeLog("handleSubmit");
+      this.localError = "";
       if (this.formData.password.length < 6) {
-        this.$emit("handleError", "Password must be at least 6 characters");
+        this.localError = "Password must be at least 6 characters";
         return;
       }
       if (this.formData.name.length < 3) {
-        this.$emit("handleError", "Name must be at least 3 characters");
+        this.localError = "Name must be at least 3 characters";
         return;
       }
       this.$emit("handleRegister", { ...this.formData });
